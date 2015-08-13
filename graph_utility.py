@@ -129,6 +129,7 @@ def make_filtered_subgraph(graphfile, year, test="no"):
 
 
 #*****#
+#make_filtered_subgraph("entity_date_multigraph.graphml", "1982", "test")
 #make_filtered_subgraph("entity_date_multigraph.graphml", "1996", "test")
 #make_filtered_subgraph("entity_date_multigraph.graphml", "1995", "test")
 #make_filtered_subgraph("entity_date_multigraph.graphml", "1995", "test")
@@ -150,15 +151,38 @@ def make_filtered_subgraph_dev(graphfile, year, test="no"):
 	_year = str(year)
 
 	G=nx.read_graphml(graphfile)
-	#SG=nx.MultiGraph( [ (u,v,d) for u,v,d in G.edges(data=True) if _year in d['date'].split(':', 1)[0]])
-	SG=nx.MultiGraph( [ (u,v,d) for u,v,d in G.edges(data=True) if _year in d['date'].split(':', 1)[0]])
-	SG.add_nodes_from(G.nodes(data=True))
+	for u, d in G.nodes(data=True):
+		try: 
+			name0 = str(d['name']).split('-')[1]
+		except: 
+			name0 = str(d['name']).split('_', 1)[1].split('_', 1)[0]
+			if len(name0) <=4:
+				name0 = str(d['name']).split('_', 1)[1].split('_', 1)[1]
+			elif len(name0) > 4:
+				name0 = str(d['name']).split('_', 1)[1]
 
+		name = name0.split('.')[0].replace('_', ' ')
+		#print name
+
+		G.add_node(u, name=str(d['name']), Label=name)
+		#G.remove_node(u)
+
+
+
+	#Create Subgraph with Edges for Specified Year
+	SG=nx.MultiGraph( [ (u,v,d) for u,v,d in G.edges(data=True) if _year in d['date'].split(':', 1)[0]])
+	
+	#Copy All Nodes and Node Data to Subgraph
+	SG.add_nodes_from(G.nodes(data=True))
+	
+	#Remove Nodes without Edges from Subgraph
+	SG.remove_nodes_from((n for n,d in SG.degree_iter() if d==0))
 
 	outfile = _year+"_multigraph.graphml"
 	nx.write_graphml(SG, outfile)
 
 	if test == "no":
+		edge_list(outfile, True, "Yes")
 		pass
 	elif test == "test":
 		edge_list(outfile, True, "Yes", "print")
@@ -167,6 +191,6 @@ def make_filtered_subgraph_dev(graphfile, year, test="no"):
 
 #*****#
 #make_filtered_subgraph_dev("entity_date_multigraph.graphml", "1996", "test")
-
-
-
+#make_filtered_subgraph_dev("entity_date_multigraph.graphml", "1996")
+#make_filtered_subgraph_dev("entity_date_multigraph.graphml", "1997")
+make_filtered_subgraph_dev("entity_date_multigraph.graphml", "1998")
