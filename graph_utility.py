@@ -152,7 +152,10 @@ def make_filtered_subgraph_dev(graphfile, year, test="no"):
 
 	G=nx.read_graphml(graphfile)
 	for u, d in G.nodes(data=True):
-		try: 
+
+
+		#Creating Name Labels
+		try:
 			name0 = str(d['name']).split('-')[1]
 		except: 
 			name0 = str(d['name']).split('_', 1)[1].split('_', 1)[0]
@@ -161,12 +164,96 @@ def make_filtered_subgraph_dev(graphfile, year, test="no"):
 			elif len(name0) > 4:
 				name0 = str(d['name']).split('_', 1)[1]
 
+
+		"""
+		#Trying to resolve the messed up name deliters
+		#Check to see if Bowen's script is fixed.
+
+		try:
+			nm = str(d['name']).split('-')
+			if len(nm) > 2:
+				_name0 = str(d['name']).replace('-', '_')
+				print _name0
+				try:
+					name0 = str(d['name']).split('_', 1)[1].split('_', 1)[0]
+					if len(name0) <=4:
+						name0 = str(d['name']).split('_', 1)[1].split('_', 1)[1]
+					elif len(name0) > 4:
+						name0 = str(d['name']).split('_', 1)[1]
+
+			else:
+				try:
+					name0 = str(d['name']).split('-')[1]
+				except: 
+					name0 = str(d['name']).split('_', 1)[1].split('_', 1)[0]
+					if len(name0) <=4:
+						name0 = str(d['name']).split('_', 1)[1].split('_', 1)[1]
+					elif len(name0) > 4:
+						name0 = str(d['name']).split('_', 1)[1]
+
+		except:
+				try:
+					name0 = str(d['name']).split('-')[1]
+				except: 
+					name0 = str(d['name']).split('_', 1)[1].split('_', 1)[0]
+					if len(name0) <=4:
+						name0 = str(d['name']).split('_', 1)[1].split('_', 1)[1]
+					elif len(name0) > 4:
+						name0 = str(d['name']).split('_', 1)[1]
+		"""
+
 		name = name0.split('.')[0].replace('_', ' ')
-		#print name
 
-		G.add_node(u, name=str(d['name']), Label=name)
+		#Creating Department Labels and Groups
+		try: 
+			dept0 = str(d['name']).split('-')[0]
+			dept1 = dept0.replace('_', ' ')
+			dept_group = str(d['name']).split('-')[0].split('_', 1)[0]
+			#print dept0
+			#test = str(d['name']).split('-')[0].split('_', 1)[1]
+			#print dept0
+
+			#test = str(d['name']).split('_', 1)[1].split('_', 1)[0]
+			#print test
+			#test = dept0.split('_', 1)[0]
+			#print test
+			test = ''
+			if len(test) <=4:
+				dept = str(d['name']).split('_', 1)[0]
+				#print dept
+			elif len(test) > 4:
+				name0 = str(d['name']).split('_', 1)[1]
+
+
+			if len(test) <=4:
+				test = str(d['name']).split('_', 1)[1].split('_', 1)[1]
+				#print test
+			elif len(name0) > 4:
+				test = str(d['name']).split('_', 1)[1]
+			#print dept
+		except:
+			pass
+
+		#Creating Department Group
+		dept1 = str(d['name']).split('-')[0].split('_')[0:1]
+		
+		for D in dept1:
+
+			#Group Religion Labels in Single Department
+			if "THEO" in D or "JWSC" in D or "HREL" in D or "HCHR" in D or "ISLM" in D or "HIJD" in D or "RETH" in D or "BIBL" in D or "DVPR" in D:
+				dept_group = "THEO"
+				#print dept_group
+
+			#Every Other Department
+			else:
+				dept_group = str(d['name']).split('-')[0].split('_', 1)[0]
+				#print dept_group
+		
+
+		#dept_group = str(d['name']).split('-')[0].split('_', 1)[0]
+
+		G.add_node(u, name=str(d['name']), Label=name, Department_Group=dept_group)
 		#G.remove_node(u)
-
 
 
 	#Create Subgraph with Edges for Specified Year
@@ -181,6 +268,7 @@ def make_filtered_subgraph_dev(graphfile, year, test="no"):
 	outfile = _year+"_multigraph.graphml"
 	nx.write_graphml(SG, outfile)
 
+	#Print Options
 	if test == "no":
 		edge_list(outfile, True, "Yes")
 		pass
@@ -193,4 +281,4 @@ def make_filtered_subgraph_dev(graphfile, year, test="no"):
 #make_filtered_subgraph_dev("entity_date_multigraph.graphml", "1996", "test")
 #make_filtered_subgraph_dev("entity_date_multigraph.graphml", "1996")
 #make_filtered_subgraph_dev("entity_date_multigraph.graphml", "1997")
-make_filtered_subgraph_dev("entity_date_multigraph.graphml", "1998")
+#make_filtered_subgraph_dev("entity_date_multigraph.graphml", "1998")
