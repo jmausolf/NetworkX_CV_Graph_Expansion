@@ -72,7 +72,6 @@ def add_year_edges(subgraph):
 				G.add_edge(u, v, date=new_year, entity=str(d['entity']))
 
 		else:
-			print "ERROR: An error has occured in expanding the edges."
 			pass
 
 	print "Number of years-range edges detected = ", years_range_edges
@@ -111,7 +110,6 @@ def remove_years_range_edges(subgraph):
 			G.remove_edge(u, v)
 
 		else:
-			print "ERROR: An error has occured in removing the year-range edges."
 			pass
 
 	print "Number of years-range edges detected = ", years_range_edges
@@ -407,10 +405,10 @@ def expand_and_contract_loop(subgraph):
 
 #expand_and_contract_loop("1982_multigraph.graphml")
 #expand_and_contract_loop("1989_multigraph.graphml")
-expand_and_contract_loop("1995_multigraph.graphml")
+#expand_and_contract_loop("1995_multigraph.graphml")
 #expand_and_contract_loop("2009_multigraph.graphml")
 #expand_and_contract_loop("2008_multigraph.graphml")
-#expand_and_contract_loop("allyears_entity_date_multigraph.graphml")
+#expand_and_contract_loop("allyears_multigraph_fx.graphml")
 
 
 #____________________________________________________________________#
@@ -449,25 +447,27 @@ def expand_edges_and_remove_nl(loaded_Graph):
 		try:
 			_year = d['date']
 		except:
-			_year = 'except'
-		#print _year, len(_year)
+			print "ERROR: An error has occured in defining edge dates."
+
+		#Define Label
+		lb = str(d['entity']).title().split('|')[1]
+
 		if len(_year) > 10:
 			years_range_edges += 1
-			#print str(_year)
 			year_list = year_expand(str(_year))
 
 			#Expand Year-Range Edge
-			#Add a Duplicate Edge for each year in Expanded Range
 			for new_year in year_list:
-				#print new_year
 				expanded_edges +=1
-				G.add_edge(u, v, date=new_year, entity=str(d['entity']))
+				G.add_edge(u, v, date=new_year, entity=str(d['entity']), Label=lb)
 
 			G.remove_edge(u, v)
 			removed_edges +=1
 
+
 		else:
-			#print _year
+			G.add_edge(u, v, date=str(d['date']), entity=str(d['entity']), Label=lb)
+			G.remove_edge(u, v)
 			pass
 
 
@@ -499,35 +499,29 @@ def expand_edges_and_remove_nl2(loaded_Graph):
 		try:
 			_year = d['date']
 		except:
-			_year = 'except'
-		#print _year, len(_year)
+			print "ERROR: An error has occured in defining edge dates."
+
+		#Define Label
+		lb = str(d['entity']).title().split('|')[1]
+
 		if len(_year) > 10:
 			years_range_edges += 1
-			#print str(_year)
 			year_list = year_expand(str(_year))
 
 			#Expand Year-Range Edge
-			#Add a Duplicate Edge for each year in Expanded Range
 			for new_year in year_list:
-				#print new_year
 				expanded_edges +=1
-				G.add_edge(u, v, date=new_year, entity=str(d['entity']))
+				G.add_edge(u, v, date=new_year, entity=str(d['entity']), Label=lb)
 
-			#G.remove_edge(u, v)
-
-			#**Defined above, seems to have improvement over 
-			##G.remove_edge(u, v)
-			
 			G.remove_edges_from([(u,v),(u,v)])
 			removed_edges +=1
 
 
-		
-
-
 		else:
-			#G.remove_edges_from([(u,v, str(d)),(u,v, str(d))])
+			G.add_edge(u, v, date=str(d['date']), entity=str(d['entity']), Label=lb)
+			G.remove_edge(u, v)
 			pass
+
 
 
 	#outfile = subgraph
@@ -608,7 +602,7 @@ def expand_and_contract_loop_nl(subgraph):
 def expand_and_contract_loop_nlo(subgraph):
 	import shutil
 	infile = subgraph
-	outfile = "loop_3_"+infile
+	outfile = "nl_loop_"+infile
 	shutil.copy2(infile, outfile)
 
 	print "loading graph file..."
@@ -640,10 +634,11 @@ def expand_and_contract_loop_nlo(subgraph):
 			if remaining_edges <= 0:
 				nx.write_graphml(G, outfile)
 				print '\n', "Total number of loops = ", loop, "...complete."
+				print "Checking for duplicate edges...", '\n'
 				#expand_edges_and_remove(outfile)
-				test_no_year_range(outfile)
+				#test_no_year_range(outfile)
 				#test_no_year_range_nl(G)
-				print detect_duplicatesEdges(G, "loaded_Graph")
+				detect_duplicatesEdges(G, 10, "loaded_Graph")
 				edge_list(G, True, "Yes", "pass", "no_label", "loaded_Graph")
 				print "-"*50
 				pass
@@ -657,9 +652,10 @@ def expand_and_contract_loop_nlo(subgraph):
 
 #expand_and_contract_loop_nlo("1989_multigraph.graphml")
 #expand_and_contract_loop_nlo("1995_multigraph.graphml")
-#expand_and_contract_loop_nlo("2008_multigraph.graphml")
+expand_and_contract_loop_nlo("2008_multigraph.graphml")
 #expand_and_contract_loop_nlo("2009_multigraph.graphml")
 #expand_and_contract_loop_nlo("all_years_entity_date_multigraph.graphml")
+#expand_and_contract_loop_nlo("allyears_multigraph_fx.graphml")
 
 
 #test_no_year_range("loop_3_all_years_entity_date_multigraph.graphml")
