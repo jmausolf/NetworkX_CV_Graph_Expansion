@@ -6,10 +6,7 @@
 ###                            ###
 ##################################
 
-import cPickle
 import networkx as nx
-import itertools
-
 
 def edge_list(graphfile, data_option, stat_option, print_write="pass", for_label="no_label", load="graphfile"):
 	
@@ -20,7 +17,6 @@ def edge_list(graphfile, data_option, stat_option, print_write="pass", for_label
 		G=graphfile
 	else:
 		print "Invalid load option. Please leave blank and specify a graphfile to read or provide a preloaded graphfile and select the option 'loaded_Graph'."
-
 
 	data = data_option
 	stat = stat_option.lower()
@@ -106,7 +102,6 @@ def edge_list(graphfile, data_option, stat_option, print_write="pass", for_label
 #edge_list("2008_edges_removed_multigraph.graphml", True, "Yes", "write")
 
 
-
 def make_filtered_subgraph(graphfile, year, test="no"):
 	"""This function creates a subgraph for a given edge year
 	Has correct nodes, but they lack attributes."""
@@ -126,9 +121,6 @@ def make_filtered_subgraph(graphfile, year, test="no"):
 	elif test == "test":
 		edge_list(outfile, True, "Yes", "print")
 
-
-
-#*****#
 #make_filtered_subgraph("entity_date_multigraph.graphml", "1982", "test")
 #make_filtered_subgraph("entity_date_multigraph.graphml", "1996", "test")
 #make_filtered_subgraph("entity_date_multigraph.graphml", "1995", "test")
@@ -156,104 +148,42 @@ def make_filtered_subgraph_dev(graphfile, year, test="no"):
 
 		#Creating Name Labels
 		try:
-			name0 = str(d['name']).split('-')[1]
-		except: 
+			name0 = str(d['name']).split('-', 1)[1]
+		except:
+			print "Exception occurred. Check to see if all names follow DEPT_DEPT-NAME_NAME format. These issues are resolved for file: 'entity_date_multigraph_fx.graphml' in the University of Chicago Network."
 			name0 = str(d['name']).split('_', 1)[1].split('_', 1)[0]
 			if len(name0) <=4:
 				name0 = str(d['name']).split('_', 1)[1].split('_', 1)[1]
 			elif len(name0) > 4:
 				name0 = str(d['name']).split('_', 1)[1]
 
-
-		"""
-		#Trying to resolve the messed up name deliters
-		#Check to see if Bowen's script is fixed.
-
-		try:
-			nm = str(d['name']).split('-')
-			if len(nm) > 2:
-				_name0 = str(d['name']).replace('-', '_')
-				print _name0
-				try:
-					name0 = str(d['name']).split('_', 1)[1].split('_', 1)[0]
-					if len(name0) <=4:
-						name0 = str(d['name']).split('_', 1)[1].split('_', 1)[1]
-					elif len(name0) > 4:
-						name0 = str(d['name']).split('_', 1)[1]
-
-			else:
-				try:
-					name0 = str(d['name']).split('-')[1]
-				except: 
-					name0 = str(d['name']).split('_', 1)[1].split('_', 1)[0]
-					if len(name0) <=4:
-						name0 = str(d['name']).split('_', 1)[1].split('_', 1)[1]
-					elif len(name0) > 4:
-						name0 = str(d['name']).split('_', 1)[1]
-
-		except:
-				try:
-					name0 = str(d['name']).split('-')[1]
-				except: 
-					name0 = str(d['name']).split('_', 1)[1].split('_', 1)[0]
-					if len(name0) <=4:
-						name0 = str(d['name']).split('_', 1)[1].split('_', 1)[1]
-					elif len(name0) > 4:
-						name0 = str(d['name']).split('_', 1)[1]
-		"""
-
+		#Full Name - Cleaned
 		name = name0.split('.')[0].replace('_', ' ')
 
 		#Creating Department Labels and Groups
 		try: 
-			dept0 = str(d['name']).split('-')[0]
-			dept1 = dept0.replace('_', ' ')
-			dept_group = str(d['name']).split('-')[0].split('_', 1)[0]
-			#print dept0
-			#test = str(d['name']).split('-')[0].split('_', 1)[1]
-			#print dept0
-
-			#test = str(d['name']).split('_', 1)[1].split('_', 1)[0]
-			#print test
-			#test = dept0.split('_', 1)[0]
-			#print test
-			test = ''
-			if len(test) <=4:
-				dept = str(d['name']).split('_', 1)[0]
-				#print dept
-			elif len(test) > 4:
-				name0 = str(d['name']).split('_', 1)[1]
-
-
-			if len(test) <=4:
-				test = str(d['name']).split('_', 1)[1].split('_', 1)[1]
-				#print test
-			elif len(name0) > 4:
-				test = str(d['name']).split('_', 1)[1]
-			#print dept
+			dept0 = str(d['name']).split('-', 1)[0]
+			dept = "("+str(dept0.replace('_', ', '))+")"
+			print dept
+		
 		except:
-			pass
+			print "Exception occurred. Check to see if all names follow DEPT_DEPT-NAME_NAME format. These issues are resolved for file: 'entity_date_multigraph_fx.graphml' in the University of Chicago Network."
 
 		#Creating Department Group
-		dept1 = str(d['name']).split('-')[0].split('_')[0:1]
+		dg = str(d['name']).split('-')[0].split('_')[0:1]
 		
-		for D in dept1:
+		for D in dg:
 
-			#Group Religion Labels in Single Department
+			#Group Religion Labels into Single Department
 			if "THEO" in D or "JWSC" in D or "HREL" in D or "HCHR" in D or "ISLM" in D or "HIJD" in D or "RETH" in D or "BIBL" in D or "DVPR" in D:
 				dept_group = "THEO"
-				#print dept_group
 
 			#Every Other Department
 			else:
 				dept_group = str(d['name']).split('-')[0].split('_', 1)[0]
-				#print dept_group
-		
 
-		#dept_group = str(d['name']).split('-')[0].split('_', 1)[0]
 
-		G.add_node(u, name=str(d['name']), Label=name, Department_Group=dept_group)
-		#G.remove_node(u)
+		G.add_node(u, name=str(d['name']), Label=str(name+' - '+dept_group), Departments=dept, Department_Group=dept_group, Name=name)
 
 
 	#Create Subgraph with Edges for Specified Year
@@ -276,9 +206,9 @@ def make_filtered_subgraph_dev(graphfile, year, test="no"):
 		edge_list(outfile, True, "Yes", "print")
 
 
+#make_filtered_subgraph_dev("entity_date_multigraph_fx.graphml", "1998")
+#make_filtered_subgraph_dev("entity_date_multigraph_fx.graphml", "2009")
 
-#*****#
-#make_filtered_subgraph_dev("entity_date_multigraph.graphml", "1996", "test")
-#make_filtered_subgraph_dev("entity_date_multigraph.graphml", "1996")
-#make_filtered_subgraph_dev("entity_date_multigraph.graphml", "1997")
-#make_filtered_subgraph_dev("entity_date_multigraph.graphml", "1998")
+
+
+
