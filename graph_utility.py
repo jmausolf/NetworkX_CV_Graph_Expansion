@@ -86,8 +86,9 @@ def edge_list(graphfile, data_option, stat_option, print_write="pass", for_label
 
 	#Print Stat Option
 	if stat=="yes":
-		#stats = ['\n'"MULTIGRAPH STATISTICS"'\n', '_'*20, '\n', "Nodes: ", G.number_of_nodes(), '\n', "Edges: ", G.size(), '\n', '_'*20, '\n']
 		print '\n'"MULTIGRAPH STATISTICS"'\n', '_'*20, '\n', "Nodes: ", G.number_of_nodes(), '\n', "Edges: ", G.size(), '\n', '_'*20, '\n'
+	elif stat=="e1":
+		print "Edges: ", G.size()
 	elif stat=="no":
 		pass
 	else:
