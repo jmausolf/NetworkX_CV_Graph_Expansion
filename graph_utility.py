@@ -65,6 +65,16 @@ def edge_list(graphfile, data_option, stat_option, print_write="pass", for_label
 					finally:
 						f.close()
 						pass
+				elif print_write == "w2":
+					try:
+						outfile = 'Edgelist-W2__'+graphfile+".csv"
+						f=open(outfile, 'a')
+						for line in nx.generate_edgelist(G):
+							delimited_line = line.replace('	', ' ').replace(',', ' ')
+							f.write(u'%s\n' % (delimited_line))
+					finally:
+						f.close()
+						pass
 
 			elif for_label!="no_label":
 				if print_write == "print":

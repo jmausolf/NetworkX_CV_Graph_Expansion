@@ -602,7 +602,7 @@ def expand_and_contract_loop_nl(subgraph):
 def expand_and_contract_loop_nlo(subgraph):
 	import shutil
 	infile = subgraph
-	outfile = "nl_loop_"+infile
+	outfile = "nlo_loop_"+infile
 	shutil.copy2(infile, outfile)
 
 	print "loading graph file..."
@@ -640,6 +640,7 @@ def expand_and_contract_loop_nlo(subgraph):
 				#test_no_year_range_nl(G)
 				detect_duplicatesEdges(G, 10, "loaded_Graph")
 				edge_list(G, True, "Yes", "pass", "no_label", "loaded_Graph")
+				#edge_list(outfile, True, "Yes", "w2")
 				print "-"*50
 				pass
 
@@ -769,7 +770,7 @@ def remove_edges_nl2(loaded_Graph):
 def expand_and_contract_loop_2pt(subgraph):
 	import shutil
 	infile = subgraph
-	outfile = "nl_loop_"+infile
+	outfile = "EXPANDED_"+infile
 	shutil.copy2(infile, outfile)
 
 	print "loading graph file..."
@@ -808,6 +809,7 @@ def expand_and_contract_loop_2pt(subgraph):
 				print "Checking for duplicate edges...", '\n'
 				detect_duplicatesEdges(G, 10, "loaded_Graph")
 				edge_list(G, True, "Yes", "pass", "no_label", "loaded_Graph")
+				#edge_list(outfile, True, "Yes", "w2")
 				print "-"*50
 				pass
 
@@ -818,7 +820,7 @@ def expand_and_contract_loop_2pt(subgraph):
 
 
 
-expand_and_contract_loop_2pt("1995_multigraph.graphml")
+#expand_and_contract_loop_2pt("1995_multigraph.graphml")
 #expand_and_contract_loop_2pt("2008_multigraph.graphml")
-#expand_and_contract_loop_2pt("allyears_multigraph_fx.graphml")
+expand_and_contract_loop_2pt("allyears_multigraph_fx.graphml")
 
