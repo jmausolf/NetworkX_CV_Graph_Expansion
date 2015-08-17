@@ -773,7 +773,7 @@ def expand_and_contract_loop_2pt(subgraph):
 	outfile = "EXPANDED_"+infile
 	shutil.copy2(infile, outfile)
 
-	print "loading graph file..."
+	print "loading graph file..."+str(infile)
 	G=nx.read_graphml(outfile)
 
 	#Establish base statistics
@@ -822,5 +822,6 @@ def expand_and_contract_loop_2pt(subgraph):
 
 #expand_and_contract_loop_2pt("1995_multigraph.graphml")
 #expand_and_contract_loop_2pt("2008_multigraph.graphml")
-expand_and_contract_loop_2pt("allyears_multigraph_fx.graphml")
-
+#expand_and_contract_loop_2pt("allyears_multigraph_fx.graphml")
+#expand_and_contract_loop_2pt("entity_date_multigraph_fx.graphml")
+expand_and_contract_loop_2pt("full_entity_date_multigraph_fx.graphml")
