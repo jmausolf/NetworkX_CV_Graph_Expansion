@@ -652,10 +652,173 @@ def expand_and_contract_loop_nlo(subgraph):
 
 #expand_and_contract_loop_nlo("1989_multigraph.graphml")
 #expand_and_contract_loop_nlo("1995_multigraph.graphml")
-expand_and_contract_loop_nlo("2008_multigraph.graphml")
+#expand_and_contract_loop_nlo("2008_multigraph.graphml")
 #expand_and_contract_loop_nlo("2009_multigraph.graphml")
 #expand_and_contract_loop_nlo("all_years_entity_date_multigraph.graphml")
 #expand_and_contract_loop_nlo("allyears_multigraph_fx.graphml")
 
 
-#test_no_year_range("loop_3_all_years_entity_date_multigraph.graphml")
+#____________________________________________________________________#
+#                                                                    #
+## <--- No Load Functions 2 Part (Read from Loaded Graph File) ---> ##
+#____________________________________________________________________#
+
+
+def expand_edges_nl2(loaded_Graph):
+	#infile = str(subgraph).split('_', 1)[0]
+	#G=nx.read_graphml(loaded_Graph)
+	G = loaded_Graph
+
+	years_range_edges = 0
+	expanded_edges = 0
+	removed_edges = 0
+	for u,v,d in G.edges(data=True):
+		try:
+			_year = d['date']
+		except:
+			print "ERROR: An error has occured in defining edge dates."
+
+		#Define Label
+		lb = str(d['entity']).title().split('|')[1]
+
+		if len(_year) > 10:
+			years_range_edges += 1
+			year_list = year_expand(str(_year))
+
+			#Expand Year-Range Edge
+			for new_year in year_list:
+				expanded_edges +=1
+				G.add_edge(u, v, date=new_year, entity=str(d['entity']), Label=lb)
+
+			#G.remove_edges_from([(u,v),(u,v)])
+			#removed_edges +=1
+
+
+		else:
+			G.add_edge(u, v, date=str(d['date']), entity=str(d['entity']), Label=lb)
+			G.remove_edge(u, v)
+			pass
+
+
+
+	#outfile = subgraph
+	#nx.write_graphml(G, outfile)
+	edge_list(G, True, "Yes", "pass", "no_label", "loaded_Graph")
+	#edge_list(outfile, True, "Yes")
+
+	print "Number of years-range edges detected = ", years_range_edges
+	print "Number of years-range edges removed = ", removed_edges
+	print "Number of new expanded edges added = ", expanded_edges
+	print "Total number of new edges = ------>", (expanded_edges-removed_edges)
+
+	return (expanded_edges-removed_edges)
+
+
+def remove_edges_nl2(loaded_Graph):
+	#infile = str(subgraph).split('_', 1)[0]
+	#G=nx.read_graphml(loaded_Graph)
+	G = loaded_Graph
+
+	years_range_edges = 0
+	expanded_edges = 0
+	removed_edges = 0
+	for u,v,d in G.edges(data=True):
+		try:
+			_year = d['date']
+		except:
+			print "ERROR: An error has occured in defining edge dates."
+
+		#Define Label
+		lb = str(d['entity']).title().split('|')[1]
+
+		if len(_year) > 10:
+			years_range_edges += 1
+			year_list = year_expand(str(_year))
+
+			#Expand Year-Range Edge
+			#for new_year in year_list:
+			#	expanded_edges +=1
+			#	G.add_edge(u, v, date=new_year, entity=str(d['entity']), Label=lb)
+
+			G.remove_edges_from([(u,v),(u,v)])
+			removed_edges +=1
+
+
+		else:
+			#G.add_edge(u, v, date=str(d['date']), entity=str(d['entity']), Label=lb)
+			#G.remove_edge(u, v)
+			pass
+
+
+
+	#outfile = subgraph
+	#nx.write_graphml(G, outfile)
+	edge_list(G, True, "Yes", "pass", "no_label", "loaded_Graph")
+	#edge_list(outfile, True, "Yes")
+
+	print "Number of years-range edges detected = ", years_range_edges
+	print "Number of years-range edges removed = ", removed_edges
+	print "Number of new expanded edges added = ", expanded_edges
+	print "Total number of new edges = ------>", (expanded_edges-removed_edges)
+
+	return (expanded_edges-removed_edges)
+
+
+
+
+def expand_and_contract_loop_2pt(subgraph):
+	import shutil
+	infile = subgraph
+	outfile = "nl_loop_"+infile
+	shutil.copy2(infile, outfile)
+
+	print "loading graph file..."
+	G=nx.read_graphml(outfile)
+
+	#Establish base statistics
+	print '\n', "-"*50, '\n', "BASE GRAPH FILE BEFORE CONVERSION:", '\n', "-"*50
+	edge_list(G, True, "Yes", "pass", "no_label", "loaded_Graph")
+	print "-"*50
+
+
+	remaining_edges = testing_no_year_range_nl(G)
+
+
+	#Loop
+	loop = 0
+
+	if remaining_edges > 0:
+
+		#Add Expanded Edges
+		expand_edges_nl2(G)
+
+
+		#Loop Over Edge Removal (Until Passes)
+		while remaining_edges > 0:
+			loop += 1
+			print '\n', "Looping, working on loop number ", loop, "..."
+			#expand_edges_and_remove(outfile)
+			remove_edges_nl2(G)
+			remaining_edges = testing_no_year_range_nl(G)
+			test_no_year_range_nl(G)
+			print testing_no_year_range_nl(G)
+			if remaining_edges <= 0:
+				nx.write_graphml(G, outfile)
+				print '\n', "Total number of loops = ", loop, "...complete."
+				print "Checking for duplicate edges...", '\n'
+				detect_duplicatesEdges(G, 10, "loaded_Graph")
+				edge_list(G, True, "Yes", "pass", "no_label", "loaded_Graph")
+				print "-"*50
+				pass
+
+	elif remaining_edges <= 0:
+		print "...No edges need expansion."
+		expand_edges_and_remove(outfile)
+		testing_no_year_range(outfile)
+
+
+
+expand_and_contract_loop_2pt("1995_multigraph.graphml")
+#expand_and_contract_loop_2pt("2008_multigraph.graphml")
+#expand_and_contract_loop_2pt("allyears_multigraph_fx.graphml")
+

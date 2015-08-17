@@ -98,7 +98,7 @@ def edge_list(graphfile, data_option, stat_option, print_write="pass", for_label
 #edge_list("entity_date_multigraph.graphml", True, "Yes", "pass", "date")
 #edge_list("loop_allyears_entity_date_multigraph.graphml", True, "Yes", "print")
 #edge_list("2008_multigraph.graphml", True, "Yes", "print")
-#edge_list("2008_multigraph.graphml", True, "Yes", "write")
+#edge_list("2008_multigraph.graphml", True, "Yes", "pass")
 #edge_list("2008_edges_added_multigraph.graphml", True, "Yes", "write")
 #edge_list("2008_edges_removed_multigraph.graphml", True, "Yes", "write")
 
@@ -209,6 +209,7 @@ def make_filtered_subgraph_dev(graphfile, year, test="no"):
 
 #make_filtered_subgraph_dev("entity_date_multigraph_fx.graphml", "1998")
 #make_filtered_subgraph_dev("entity_date_multigraph_fx.graphml", "2009")
+#make_filtered_subgraph_dev("entity_date_multigraph_fx.graphml", "2008")
 
 
 
