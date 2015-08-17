@@ -696,7 +696,7 @@ def expand_edges_nl2(loaded_Graph):
 
 
 		else:
-			G.add_edge(u, v, date=str(d['date']), entity=str(d['entity']), Label=lb)
+			G.add_edge(u, v, date=str(d['date']), entity=str(d['entity']), Label=lb, Weight='')
 			G.remove_edge(u, v)
 			pass
 
@@ -770,7 +770,7 @@ def remove_edges_nl2(loaded_Graph):
 def expand_and_contract_loop_2pt(subgraph):
 	import shutil
 	infile = subgraph
-	outfile = "EXPANDED_"+infile
+	outfile = "W_EXPANDED_"+infile
 	shutil.copy2(infile, outfile)
 
 	print "loading graph file..."+str(infile)
@@ -824,4 +824,9 @@ def expand_and_contract_loop_2pt(subgraph):
 #expand_and_contract_loop_2pt("2008_multigraph.graphml")
 #expand_and_contract_loop_2pt("allyears_multigraph_fx.graphml")
 #expand_and_contract_loop_2pt("entity_date_multigraph_fx.graphml")
-expand_and_contract_loop_2pt("full_entity_date_multigraph_fx.graphml")
+#expand_and_contract_loop_2pt("full_entity_date_multigraph_fx.graphml")
+
+
+
+
+
