@@ -113,6 +113,76 @@ def edge_list(graphfile, data_option, stat_option, print_write="pass", for_label
 #edge_list("2008_edges_removed_multigraph.graphml", True, "Yes", "write")
 
 
+def graph_nodes(graphfile, test="no"):
+	
+	#infile = str(graphfile).split('_', 1)[0]
+	_graphfile = str(graphfile)
+
+	G=nx.read_graphml(graphfile)
+	for u, d in G.nodes(data=True):
+
+
+		#Creating Name Labels
+		try:
+			name0 = str(d['name']).split('-', 1)[1]
+		except:
+			print "Exception occurred. Check to see if all names follow DEPT_DEPT-NAME_NAME format. These issues are resolved for file: 'entity_date_multigraph_fx.graphml' in the University of Chicago Network."
+			name0 = str(d['name']).split('_', 1)[1].split('_', 1)[0]
+			if len(name0) <=4:
+				name0 = str(d['name']).split('_', 1)[1].split('_', 1)[1]
+			elif len(name0) > 4:
+				name0 = str(d['name']).split('_', 1)[1]
+
+		#Full Name - Cleaned
+		name = name0.split('.')[0].replace('_', ' ')
+
+		#Creating Department Labels and Groups
+		try: 
+			dept = str(d['name']).split('-', 1)[0]
+			#dept = "("+str(dept0.replace('_', ', '))+")"
+			#print dept
+
+		
+		except:
+			print "Exception occurred. Check to see if all names follow DEPT_DEPT-NAME_NAME format. These issues are resolved for file: 'entity_date_multigraph_fx.graphml' in the University of Chicago Network."
+
+		#Creating Department Group
+		dg = str(d['name']).split('-')[0].split('_')[0:1]
+		
+		for D in dg:
+
+			#Group Religion Labels into Single Department
+			if "THEO" in D or "JWSC" in D or "HREL" in D or "HCHR" in D or "ISLM" in D or "HIJD" in D or "RETH" in D or "BIBL" in D or "DVPR" in D:
+				dept_group = "THEO"
+
+			#Every Other Department
+			else:
+				dept_group = str(d['name']).split('-')[0].split('_', 1)[0]
+
+
+		#dept_group = str(d['name']).split('-')[0].split('_', 1)[0]
+
+		#G.add_node(u, name=str(d['name']), Label=name, Department_Group=dept_group)
+		G.add_node(u, name=str(d['name']), Label=str(name+' - '+dept_group), Department_Group=dept_group, Departments=dept)
+		#G.remove_node(u)
+
+
+	outfile = "full_"+_graphfile
+	nx.write_graphml(G, outfile)
+
+	#Print Options
+	if test == "no":
+		edge_list(outfile, True, "Yes")
+		pass
+	elif test == "test":
+		edge_list(outfile, True, "Yes", "print")
+
+
+
+#graph_nodes("entity_date_multigraph_fx.graphml")
+
+
+
 def make_filtered_subgraph(graphfile, year, test="no"):
 	"""This function creates a subgraph for a given edge year
 	Has correct nodes, but they lack attributes."""
@@ -145,7 +215,7 @@ def make_filtered_subgraph(graphfile, year, test="no"):
 #make_filtered_subgraph("entity_date_multigraph.graphml", "2009", "test")
 
 
-def make_filtered_subgraph_dev(graphfile, year, test="no"):
+def make_filtered_subgraph_dev1(graphfile, year, test="no"):
 	"""This function creates a subgraph for a given edge year
 	Gets the nodes attributes added but has nodes without edges in subgraph
 	"""
@@ -175,7 +245,89 @@ def make_filtered_subgraph_dev(graphfile, year, test="no"):
 		try: 
 			dept0 = str(d['name']).split('-', 1)[0]
 			dept = "("+str(dept0.replace('_', ', '))+")"
-			print dept
+			#print dept
+		
+		except:
+			print "Exception occurred. Check to see if all names follow DEPT_DEPT-NAME_NAME format. These issues are resolved for file: 'entity_date_multigraph_fx.graphml' in the University of Chicago Network."
+
+		#Creating Department Group
+		dg = str(d['name']).split('-')[0].split('_')[0:1]
+		
+		for D in dg:
+
+			#Group Religion Labels into Single Department
+			if "THEO" in D or "JWSC" in D or "HREL" in D or "HCHR" in D or "ISLM" in D or "HIJD" in D or "RETH" in D or "BIBL" in D or "DVPR" in D:
+				dept_group = "THEO"
+
+			#Every Other Department
+			else:
+				dept_group = str(d['name']).split('-')[0].split('_', 1)[0]
+
+		print dept_group
+		G.add_node(u, name=str(d['name']), Label=str(name+' - '+dept_group), Departments=dept, Department_Group=dept_group, Name=name)
+		#G.add_node(u, name=str(d['name']), Label=name, Department_Group=dept_group)
+
+	#Create Subgraph with Edges for Specified Year
+	SG=nx.MultiGraph( [ (u,v,d) for u,v,d in G.edges(data=True) if _year in d['date'].split(':', 1)[0]])
+	
+	#Copy All Nodes and Node Data to Subgraph
+	SG.add_nodes_from(G.nodes(data=True))
+	
+	#Remove Nodes without Edges from Subgraph
+	SG.remove_nodes_from((n for n,d in SG.degree_iter() if d==0))
+
+	outfile = _year+"_test_multigraph.graphml"
+	nx.write_graphml(SG, outfile)
+
+	#Print Options
+	if test == "no":
+		edge_list(outfile, True, "Yes")
+		pass
+	elif test == "test":
+		edge_list(outfile, True, "Yes", "print")
+
+
+#make_filtered_subgraph_dev("entity_date_multigraph_fx.graphml", "1998")
+#make_filtered_subgraph_dev("entity_date_multigraph_fx.graphml", "2009")
+#make_filtered_subgraph_dev("entity_date_multigraph_fx.graphml", "2008")
+#make_filtered_subgraph_dev("EXPANDED_entity_date_multigraph_fx.graphml", "2004")
+#make_filtered_subgraph_dev("EXPANDED_entity_date_multigraph_fx.graphml", "1998", "test")
+
+
+
+
+def subgraph(graphfile, year, test="no"):
+	"""This function creates a subgraph for a given edge year
+	Gets the nodes attributes added but has nodes without edges in subgraph
+	"""
+	
+	_graphfile = str(graphfile)
+	_year = str(year)
+
+	G=nx.read_graphml(graphfile)
+	for u, d in G.nodes(data=True):
+
+
+		#Creating Name Labels
+		try:
+			name0 = str(d['name']).split('-', 1)[1]
+		except:
+			print "Exception occurred. Check to see if all names follow DEPT_DEPT-NAME_NAME format. These issues are resolved for file: 'entity_date_multigraph_fx.graphml' in the University of Chicago Network."
+			name0 = str(d['name']).split('_', 1)[1].split('_', 1)[0]
+			if len(name0) <=4:
+				name0 = str(d['name']).split('_', 1)[1].split('_', 1)[1]
+			elif len(name0) > 4:
+				name0 = str(d['name']).split('_', 1)[1]
+
+		#Full Name - Cleaned
+		name = name0.split('.')[0].replace('_', ' ')
+
+		#Creating Department Labels and Groups
+		try: 
+			dept = str(d['name']).split('-', 1)[0]
+			#dept = "("+str(dept0.replace('_', ', '))+")"
+			#print dept
+
 		
 		except:
 			print "Exception occurred. Check to see if all names follow DEPT_DEPT-NAME_NAME format. These issues are resolved for file: 'entity_date_multigraph_fx.graphml' in the University of Chicago Network."
@@ -194,7 +346,11 @@ def make_filtered_subgraph_dev(graphfile, year, test="no"):
 				dept_group = str(d['name']).split('-')[0].split('_', 1)[0]
 
 
-		G.add_node(u, name=str(d['name']), Label=str(name+' - '+dept_group), Departments=dept, Department_Group=dept_group, Name=name)
+		#dept_group = str(d['name']).split('-')[0].split('_', 1)[0]
+
+		#G.add_node(u, name=str(d['name']), Label=name, Department_Group=dept_group)
+		G.add_node(u, name=str(d['name']), Label=str(name+' - '+dept_group), Department_Group=dept_group, Departments=dept)
+		#G.remove_node(u)
 
 
 	#Create Subgraph with Edges for Specified Year
@@ -206,7 +362,17 @@ def make_filtered_subgraph_dev(graphfile, year, test="no"):
 	#Remove Nodes without Edges from Subgraph
 	SG.remove_nodes_from((n for n,d in SG.degree_iter() if d==0))
 
-	outfile = _year+"_multigraph.graphml"
+
+	#Ensure Subgraph Edge Labels Present
+	for u,v,d in SG.edges(data=True):
+
+		#Define Label
+		lb = str(d['entity']).title().split('|')[1]
+
+		SG.add_edge(u, v, date=str(d['date']), entity=str(d['entity']), Label=lb)
+		SG.remove_edge(u, v)
+
+	outfile = _year+"_sub_multigraph.graphml"
 	nx.write_graphml(SG, outfile)
 
 	#Print Options
@@ -217,10 +383,10 @@ def make_filtered_subgraph_dev(graphfile, year, test="no"):
 		edge_list(outfile, True, "Yes", "print")
 
 
-#make_filtered_subgraph_dev("entity_date_multigraph_fx.graphml", "1998")
-#make_filtered_subgraph_dev("entity_date_multigraph_fx.graphml", "2009")
-#make_filtered_subgraph_dev("entity_date_multigraph_fx.graphml", "2008")
-
+#subgraph("entity_date_multigraph.graphml", "2003")
+#subgraph("entity_date_multigraph_fx.graphml", "2003")
+#subgraph("EXPANDED_entity_date_multigraph_fx.graphml", "2004", "test")
+#subgraph("EXPANDED_entity_date_multigraph_fx.graphml", "2005")
 
 
 
