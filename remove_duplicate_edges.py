@@ -56,14 +56,6 @@ def remove_edges_from(self, ebunch):
 		except NetworkXError:
 			pass
 
-	"""
-	for e in ebunch:
-		if e in ebunch:
-			try:
-				self.remove_edge(*e)
-			except NetworkXError:
-				pass
-	"""
 
 
 def detect_duplicatesEdges(graphfile, head=10, load="graphfile"):
@@ -113,7 +105,7 @@ def detect_duplicatesEdges(graphfile, head=10, load="graphfile"):
 		return "DUPLICATES FOUND"
 
 	else:
-		print '\n', "-"*50, '\n'
+		print '\n', "-"*50, '\n', "NO DUPLICATES FOUND"
 		return "NO DUPLICATES FOUND"
 		#return "no_duplicates"
 
@@ -125,6 +117,7 @@ def detect_duplicatesEdges(graphfile, head=10, load="graphfile"):
 
 #detect_duplicatesEdges("loop_3_allyears_multigraph_fx.graphml", 5)
 #detect_duplicatesEdges("nl_loop_2008_multigraph.graphml", 5)
+#detect_duplicatesEdges("2008_multigraph.graphml", 5)
 
 
 def duplicateEdges_test(graphfile):
@@ -202,7 +195,35 @@ def remove_duplicatesEdges(graphfile):
 
 #remove_duplicatesEdges("loop_3_allyears_multigraph_fx.graphml")
 #remove_duplicatesEdges("nl_loop_2008_multigraph.graphml")
-detect_duplicatesEdges("2008_multigraph.graphml", 2)
+#detect_duplicatesEdges("2008_multigraph.graphml", 2)
+
+def rm_dup(graphfile):
+
+	import collections
+	import networkx as nx
+
+	G=nx.read_graphml(str(graphfile))
+	detect_duplicatesEdges(G, 2, "loaded_Graph")
+
+	ctr = collections.Counter()
+	for x in G.edges(data=True):
+	#for G in [A, B, C, D]:
+		print x
+		ctr.update(str(x))
+		if str(x) in ctr:
+			G.remove_edge(x)
+		else:
+			print "fail"
+
+	#duplicates = {x for (x,n) in ctr.viewitems() if n > 1}
+	#duplicates = {u, v {d} for (u, v, d,n) in ctr.viewitems() if n > 1}
+	#print duplicates
+
+	#G.remove_edges_from([str(duplicates)])
+	detect_duplicatesEdges(G, 2, "loaded_Graph")	
+
+#rm_dup("nl_loop_2008_multigraph.graphml")
+
 
 def remove_duplicatesEdges_nl(graphfile, load="graphfile"):
 	import networkx as nx
@@ -240,20 +261,6 @@ def remove_duplicatesEdges_nl(graphfile, load="graphfile"):
 	return G
 
 
-	#return duplicates
-
-	#duplicates = loop()
-	#G.remove_edges_from([(1,2),(1,2)])
-	#print dupl, len(dupl)
-	#print duplicates
-	#print edges
-	#outfile = graphfile
-	#print "writng graphfile"
-	#nx.write_graphml(G, outfile)
-	#print "removing duplicates in graph file"
-	#print "writing new graph file -->", outfile, "..."
-	#edge_list(G, True, "Yes", "print", "no_label", "loaded_Graph")
-	#edge_list(G, True, "Yes", "pass", "no_label", "loaded_Graph")
 
 def remove_duplicates(graphfile):
 
@@ -284,22 +291,13 @@ def remove_duplicates(graphfile):
 		#remove_duplicatesEdges_nl(G, "loaded_Graph")
 		H = remove_duplicatesEdges_nl(G, "loaded_Graph")
 		duplicate_edges = duplicateEdges_test(H)
-		detect_duplicatesEdges(H, 2, "loaded_Graph")
+		#detect_duplicatesEdges(H, 2, "loaded_Graph")
 
 	#print detect_duplicatesEdges(G, 5, "loaded_Graph")
 
 	#return duplicates
 
-	#duplicates = loop()
-	#G.remove_edges_from([(1,2),(1,2)])
-	#print dupl, len(dupl)
-	#print duplicates
-	#print edges
-	#outfile = "no_duplicates"+infile+"_multigraph.graphml"
-	#nx.write_graphml(G, outfile)
-	#print "removing duplicates in graph file"
-	#print "writing new graph file -->", outfile, "..."
-	#edge_list(G, True, "Yes", "print", "no_label", "loaded_Graph")
+
 	edge_list(G, True, "Yes", "pass", "no_label", "loaded_Graph")
 
 
