@@ -140,7 +140,7 @@ def remove_edges_nl2(loaded_Graph):
 def expand_and_contract_loop_2pt(subgraph):
 	import shutil
 	infile = subgraph
-	outfile = "W_EXPANDED_"+infile
+	outfile = "EXPANDED_"+infile
 	shutil.copy2(infile, outfile)
 
 	print "\nLoading graph file..."+str(infile)+"..."
@@ -180,8 +180,10 @@ def expand_and_contract_loop_2pt(subgraph):
 
 	elif remaining_edges <= 0:
 		print "...No edges need expansion."
-		expand_edges_and_remove(outfile)
-		testing_no_year_range(outfile)
+		#expand_edges_and_remove(outfile)
+		expand_edges_nl2(G)
+		remove_edges_nl2(G)
+		test_no_year_range_nl(G)
 
 
 #expand_and_contract_loop_2pt("1995_multigraph.graphml")
