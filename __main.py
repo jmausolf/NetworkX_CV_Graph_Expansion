@@ -23,6 +23,7 @@ if __name__ == "__main__":
 
 
 
+
 	##_____________________##
 	# Create clean full graph
 	##_____________________##
@@ -45,9 +46,45 @@ if __name__ == "__main__":
 	#But for years that need expansion, this gives the desired result
 
 
-	subgraph(in_file2, "2005")
+	years = [1995, 1996, 1997, 2001, 2002, 2003, 2004, 2005, 2006, 2008]
+
+	attention = []
+	for year in years:
+		subgraph(in_file1, str(year))
+		sub_file = str(year)+"_full_multigraph.graphml"
+		result = expand_and_contract_loop_2pt(sub_file)
+		if result=="NO_EXPANSION":
+			attention.append(year)
+
+	header = "----------------------------------------------\nYears Needing Manual Attention in Gephi: \n----------------------------------------------\n"
+
+	try:
+		print header, attention
+		print "Writing results to file --> Gephi_Attention_Years.txt"
+		f = open("Gephi_Attention_Years.txt", "w")
+		f.write(header.encode('utf-8'))
+		f.write(str(attention).encode('utf-8'))
+		f.close
+
+
+	except:
+		print header, attention
+		pass
+
+	#subgraph(in_file2, "2005")
+
+	#edge_year_filter_2pt(in_file2, "2005")
 
 	#expand_and_contract_loop_2pt("2005_full_multigraph.graphml")
+
+	"""
+	Sequence Model
+
+	#subgraph("entity_date_multigraph_fx.graphml", "2005")
+	graph_nodes("2005_full_multigraph.graphml")
+	"""
+
+	#expand_and_contract_loop_2pt("full_2005_full_multigraph.graphml")
 
 	"""
 	years = [2005, 2006]
