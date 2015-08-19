@@ -275,6 +275,7 @@ def subgraph(graphfile, year, test="no"):
 		SG.remove_edge(u, v)
 
 	outfile = _year+"_full_multigraph.graphml"
+	print "writing subgraph file --> ", outfile
 	nx.write_graphml(SG, outfile)
 
 	#Print Options
@@ -290,5 +291,42 @@ def subgraph(graphfile, year, test="no"):
 #subgraph("EXPANDED_entity_date_multigraph_fx.graphml", "2004", "test")
 #subgraph("EXPANDED_entity_date_multigraph_fx.graphml", "2005")
 
+
+def subgraph_filter(graphfile, year, test="no"):
+
+	_graphfile = str(graphfile)
+	_year = str(year)
+
+	G=nx.read_graphml(graphfile)
+	
+
+	#Create Subgraph with Edges for Specified Year
+	SG=nx.MultiGraph( [ (u,v,d) for u,v,d in G.edges(data=True) if _year in d['date'].split(':', 1)[0]])
+	
+	#Copy All Nodes and Node Data to Subgraph
+	SG.add_nodes_from(G.nodes(data=True))
+	
+	#Remove Nodes without Edges from Subgraph
+	SG.remove_nodes_from((n for n,d in SG.degree_iter() if d==0))
+
+
+	#Ensure Subgraph Edge Labels Present
+	for u,v,d in SG.edges(data=True):
+
+		#Define Label
+		lb = str(d['entity']).title().split('|')[1]
+
+		G.add_edge(u, v, date=str(d['date']), entity=str(d['entity']), Label=lb, Weight='')
+		G.remove_edge(u, v)
+
+	outfile = _year+"_full_multigraph.graphml"
+	nx.write_graphml(SG, outfile)
+
+	#Print Options
+	if test == "no":
+		edge_list(outfile, True, "Yes")
+		pass
+	elif test == "test":
+		edge_list(outfile, True, "Yes", "print")
 
 
