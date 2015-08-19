@@ -29,10 +29,10 @@ if __name__ == "__main__":
 	##_____________________##
 
 	#Add and Clean Node Labels
-	#graph_nodes(infile)
+	graph_nodes(infile)
 
 	#Expand the Graph 
-	#expand_and_contract_loop_2pt(in_file1)
+	expand_and_contract_loop_2pt(in_file1)
 
 	##_____________________##
 	# Create clean sub graphs
@@ -45,16 +45,21 @@ if __name__ == "__main__":
 	#Not all graphs need expansion and this fails to add edges in that case
 	#But for years that need expansion, this gives the desired result
 
+	years = [1940,	1941,	1942,	1943,	1944,	1945,	1946,	1947,	1948,	1949,	1950,	1951,	1952,	1953,	1954,	1955,	1956,	1957,	1958,	1959,	1960,	1961,	1962,	1963,	1964,	1965,	1966,	1967,	1968,	1969,	1970,	1971,	1972,	1973,	1974,	1975,	1976,	1977,	1978,	1979,	1980,	1981,	1982,	1983,	1984,	1985,	1986,	1987,	1988,	1989,	1990,	1991,	1992,	1993,	1994,	1995,	1996,	1997,	1998,	1999,	2000,	2001,	2002,	2003,	2004,	2005,	2006,	2007,	2008,	2009,	2010,	2011,	2012,	2013,	2014,	2015]
 
-	years = [1995, 1996, 1997, 2001, 2002, 2003, 2004, 2005, 2006, 2008]
 
 	attention = []
+
 	for year in years:
-		subgraph(in_file1, str(year))
-		sub_file = str(year)+"_full_multigraph.graphml"
-		result = expand_and_contract_loop_2pt(sub_file)
-		if result=="NO_EXPANSION":
-			attention.append(year)
+		try:
+			subgraph(in_file1, str(year))
+			sub_file = str(year)+"_full_multigraph.graphml"
+			result = expand_and_contract_loop_2pt(sub_file)
+			if result=="NO_EXPANSION":
+				attention.append(year)
+		except:
+			print "Sorry, "+str(year)+" not found in multigraph dataset."
+			pass
 
 	header = "----------------------------------------------\nYears Needing Manual Attention in Gephi: \n----------------------------------------------\n"
 
@@ -70,33 +75,6 @@ if __name__ == "__main__":
 	except:
 		print header, attention
 		pass
-
-	#subgraph(in_file2, "2005")
-
-	#edge_year_filter_2pt(in_file2, "2005")
-
-	#expand_and_contract_loop_2pt("2005_full_multigraph.graphml")
-
-	"""
-	Sequence Model
-
-	#subgraph("entity_date_multigraph_fx.graphml", "2005")
-	graph_nodes("2005_full_multigraph.graphml")
-	"""
-
-	#expand_and_contract_loop_2pt("full_2005_full_multigraph.graphml")
-
-	"""
-	years = [2005, 2006]
-	infile_base = "_full_multigraph.graphml"
-
-	for year in years:
-		sub_graph_infile = str(year)+infile_base
-	
-
-		subgraph(in_file2, str(year)) #Subgraph still not correct
-		expand_and_contract_loop_2pt(sub_graph_infile)
-	"""
 
 
 
