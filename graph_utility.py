@@ -256,13 +256,23 @@ def subgraph(graphfile, year, test="no"):
 
 
 	#Create Subgraph with Edges for Specified Year
+
+
 	SG=nx.MultiGraph( [ (u,v,d) for u,v,d in G.edges(data=True) if _year in d['date'].split(':', 1)[0]])
-	
+		
 	#Copy All Nodes and Node Data to Subgraph
 	SG.add_nodes_from(G.nodes(data=True))
-	
+		
 	#Remove Nodes without Edges from Subgraph
 	SG.remove_nodes_from((n for n,d in SG.degree_iter() if d==0))
+
+	#Quality Check to Reject Year Inputs Not Found
+	if SG.number_of_nodes() < 2:
+		#If Nodes < 2 (i.e. year not found)
+		return
+	else:
+		#Keep all other valid subgraphs
+		pass
 
 
 	#Ensure Subgraph Edge Labels Present
