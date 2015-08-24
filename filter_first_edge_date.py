@@ -6,9 +6,7 @@
 ###                            ###
 ##################################
 
-import cPickle
 import networkx as nx
-import itertools
 
 from test_filter import *
 from graph_utility import *
@@ -167,12 +165,7 @@ def edge_year_filter_expand_nl2(loaded_Graph):
 		lb = str(d['entity']).title().split('|')[1]
 
 		if len(_year) > 10:
-			#years_range_edges += 1
-			#year_list = year_expand(str(_year))
 
-			#Expand Year-Range Edge
-			#for new_year in year_list:
-				#expanded_edges +=1
 			print ">10"
 			G.add_edge(u, v, date=str(_year), entity=str(d['entity']), Label=lb)
 
@@ -276,7 +269,9 @@ def edge_year_filter_2pt(subgraph, year):
 def expand_and_contract_loop_2pt(subgraph):
 	import shutil
 	infile = subgraph
-	outfile = "EXPANDED_"+infile
+	infile2 = subgraph.split(".", 1)[0].split("_", 1)[1]
+	outfile = infile2+"_expanded.graphml"
+	print infile2, outfile
 	shutil.copy2(infile, outfile)
 
 	print "\nLoading graph file..."+str(infile)+"..."
@@ -329,7 +324,5 @@ def expand_and_contract_loop_2pt(subgraph):
 #expand_and_contract_loop_2pt("allyears_multigraph_fx.graphml")
 #expand_and_contract_loop_2pt("entity_date_multigraph_fx.graphml")
 #expand_and_contract_loop_2pt("full_entity_date_multigraph_fx.graphml")
+#expand_and_contract_loop_2pt("1995_full_multigraph.graphml")
 
-
-if __name__ == "__main__":
-	expand_and_contract_loop_2pt("full_entity_date_multigraph_fx.graphml")

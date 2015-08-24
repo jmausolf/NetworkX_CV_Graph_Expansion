@@ -284,7 +284,7 @@ def subgraph(graphfile, year, test="no"):
 		SG.add_edge(u, v, date=str(d['date']), entity=str(d['entity']), Label=lb)
 		SG.remove_edge(u, v)
 
-	outfile = _year+"_full_multigraph.graphml"
+	outfile = "aux_"+_year+"_full_multigraph.graphml"
 	print "writing subgraph file --> ", outfile
 	nx.write_graphml(SG, outfile)
 
@@ -329,7 +329,7 @@ def subgraph_filter(graphfile, year, test="no"):
 		G.add_edge(u, v, date=str(d['date']), entity=str(d['entity']), Label=lb, Weight='')
 		G.remove_edge(u, v)
 
-	outfile = _year+"_full_multigraph.graphml"
+	outfile = "aux_"+_year+"_full_multigraph.graphml"
 	nx.write_graphml(SG, outfile)
 
 	#Print Options
