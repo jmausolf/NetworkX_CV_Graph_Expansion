@@ -25,11 +25,19 @@ mkdir Auxillary_Graphs/Other_Graphs
 
 
 mv *aux_* Auxillary_Graphs/Yearly_Subgraphs
+mv full_entity_date_multigraph_fx.graphml Auxillary_Graphs/Other_Graphs
 mv *19* Expanded_Graphs/Yearly_Subgraphs
 mv *20* Expanded_Graphs/Yearly_Subgraphs
+mv Gephi_Attention_Years.txt Expanded_Graphs
+mv entity_date_multigraph_fx_expanded.graphml Expanded_Graphs/Full_Multigraph
 
 
 ## ______________ 3rd Stage - Clean Source Files _______________ ##
 
-#mv entity_date_multigraph.graphml Source_Files
-#mv entity_date_multigraph_fx.graphml Source_Files
+mkdir Python_Scripts
+rm *.pyc*
+mv *.py* Python_Scripts
+
+mv entity_date_multigraph.graphml Source_Files
+mv entity_date_multigraph_fx.graphml Source_Files
+
