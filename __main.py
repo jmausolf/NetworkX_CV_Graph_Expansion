@@ -29,7 +29,7 @@ if __name__ == "__main__":
 	#Add and Clean Node Labels
 	graph_nodes(infile)
 
-	#Expand the Graph 
+	#Expand the Graph
 	expand_and_contract_loop_2pt(in_file1)
 
 	#_______________________________________________#
@@ -44,7 +44,7 @@ if __name__ == "__main__":
 
 	for year in years:
 		try:
-			subgraph(in_file1, str(year))
+			subgraph("entity_date_multigraph_fx_expanded.graphml", str(year))
 			sub_file = "aux_"+str(year)+"_full_multigraph.graphml"
 			result = expand_and_contract_loop_2pt(sub_file)
 			if result=="NO_EXPANSION":
@@ -66,7 +66,3 @@ if __name__ == "__main__":
 	except:
 		print header, attention
 		pass
-
-
-
-
